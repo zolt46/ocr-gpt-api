@@ -1,6 +1,5 @@
 fastapi
 uvicorn
+pytesseract
+Pillow
 python-multipart
-easyocr
-openai
-pillow
