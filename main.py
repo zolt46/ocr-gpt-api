@@ -94,7 +94,7 @@ async def extract(file: UploadFile = File(...)):
 
     # 1. Google OCR 호출
     ocr_text = call_google_vision(tmp_path)
-    print("OCR 텍스트:\n", ocr_text)
+    #print("OCR 텍스트:\n", ocr_text)
 
     # 2. GPT에게 수치 추출 요청
     try:
