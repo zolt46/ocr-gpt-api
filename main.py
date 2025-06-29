@@ -7,6 +7,7 @@ import openai
 import base64
 import os
 import tempfile
+import json 
 
 # ====== 환경변수 설정 ======
 openai.api_key = os.getenv("OPENAI_API_KEY")
