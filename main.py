@@ -43,7 +43,14 @@ def call_google_vision(image_path):
 
     result = response.json()
     try:
-        return result['responses'][0]['fullTextAnnotation']['text']
+        # 1순위: fullTextAnnotation
+        if 'fullTextAnnotation' in result['responses'][0]:
+            return result['responses'][0]['fullTextAnnotation']['text']
+        # 2순위: textAnnotations
+        elif 'textAnnotations' in result['responses'][0]:
+            return result['responses'][0]['textAnnotations'][0]['description']
+        else:
+            return "OCR 실패 또는 텍스트 인식 불가"
     except:
         return "OCR 실패 또는 텍스트 인식 불가"
 
