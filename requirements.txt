@@ -1,6 +1,5 @@
 fastapi
 uvicorn
-pytesseract
-Pillow
-python-multipart
 openai
+requests
+python-multipart
