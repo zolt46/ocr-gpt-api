@@ -42,6 +42,7 @@ def call_google_vision(image_path):
     )
 
     result = response.json()
+    print("📦 Vision API 응답:", json.dumps(result, indent=2, ensure_ascii=False))
     try:
         # 1순위: fullTextAnnotation
         if 'fullTextAnnotation' in result['responses'][0]:
