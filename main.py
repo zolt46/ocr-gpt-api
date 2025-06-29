@@ -5,6 +5,8 @@ from PIL import Image
 import tempfile
 import openai
 import os
+import json
+from fastapi.responses import JSONResponse
 
 # 🔐 OpenAI 키 설정
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -61,8 +63,13 @@ async def extract_inbody(file: UploadFile = File(...)):
             messages=[{"role": "user", "content": prompt}],
             temperature=0
         )
-        result_json = response["choices"][0]["message"]["content"]
-        return {"extracted": result_json}
+        result_str = response["choices"][0]["message"]["content"]
+
+        # 문자열을 실제 JSON 객체로 파싱
+        parsed_result = json.loads(result_str)
+
+        # 그대로 JSON으로 응답
+        return JSONResponse(content=parsed_result)
 
     except Exception as e:
-        return {"error": str(e), "ocr_text": ocr_text}
+        return JSONResponse(status_code=500, content={"error": str(e), "ocr_text": ocr_text})
