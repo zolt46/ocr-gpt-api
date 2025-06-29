@@ -50,21 +50,22 @@ def call_google_vision(image_path):
 # ====== GPT 추출 프롬프트 ======
 def extract_inbody_with_gpt(ocr_text):
     prompt = f"""
-다음은 인바디 검사 결과지에서 OCR로 추출한 텍스트입니다:
-{ocr_text}
+다음은 인바디 검사 결과지에서 OCR로 추출한 텍스트입니다: \n\n{ocr_text}\n\n
 
 이 중에서 다음 수치만 정확히 찾아 JSON 형식으로 반환하세요:
-- 체중 (kg) → weight
-- 골격근량 (kg) → skeletalMuscle
-- 체지방량 (kg) → bodyFat
+- 체중(kg): weight
+- 골격근량(kg): skeletalMuscle
+- 체지방량(kg): bodyFat
 
-아래와 같은 JSON으로만 응답하세요:
+❗ 단, 아래와 같은 올바른 JSON 형식으로 응답하세요. 숫자는 0이 아닌 이상 00.0이 아닌 **유효한 부동소수점 숫자**로 작성하세요.
+
+예시:
 {{
-  "weight": 00.0,
-  "skeletalMuscle": 00.0,
-  "bodyFat": 00.0
+  "weight": 65.4,
+  "skeletalMuscle": 28.2,
+  "bodyFat": 12.7
 }}
-    """
+    """.strip()
 
     completion = openai.chat.completions.create(
         model="gpt-3.5-turbo",
