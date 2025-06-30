@@ -7,6 +7,8 @@ import os
 import tempfile
 import json
 import re
+from openai import OpenAI
+client = OpenAI()
 
 # 🔑 환경 변수에서 API 키 가져오기
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -157,7 +159,7 @@ async def generate_recipe(request: Request):
     prompt = build_salad_recipe_prompt(user_data)
 
     try:
-        response = openai.ChatCompletion.create(
+        response = client.chat.completions.create(
             model="gpt-3.5-turbo",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7
