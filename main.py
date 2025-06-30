@@ -6,6 +6,7 @@ import base64
 import os
 import tempfile
 import json
+import re
 
 # 🔑 환경 변수에서 API 키 가져오기
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -115,6 +116,24 @@ def build_salad_recipe_prompt(user_info: dict) -> str:
     """.strip()
     return prompt
 
+def parse_gpt_recipe(raw_text):
+    # 1, 2, 3번 레시피를 분리
+    matches = re.split(r"\n(?=\d+\.\s)", raw_text.strip())
+    recipes = []
+
+    for block in matches:
+        lines = block.strip().split('\n')
+        if len(lines) >= 3:
+            title = lines[0].strip().replace("1. ", "").replace("2. ", "").replace("3. ", "")
+            ingredients = lines[1].replace("재료:", "").strip()
+            nutrition = lines[2].replace("영양 정보:", "").strip()
+            recipes.append({
+                "title": title,
+                "ingredients": ingredients,
+                "nutrition": nutrition
+            })
+    return recipes
+
 
 # ✅ /extract_inbody - OCR + GPT 수치 추출
 @app.post("/extract_inbody")
@@ -143,9 +162,12 @@ async def generate_recipe(request: Request):
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7
         )
+        raw_text = response["choices"][0]["message"]["content"]
+        recipe_list = parse_gpt_recipe(raw_text)
+
         return {
             "success": True,
-            "recipe": response["choices"][0]["message"]["content"]
+            "recipes": recipe_list
         }
     except Exception as e:
         return {
