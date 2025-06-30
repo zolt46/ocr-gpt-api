@@ -111,16 +111,20 @@ def build_salad_recipe_prompt(user_info: dict) -> str:
 [허용된 재료 목록]
 {', '.join(ALLOWED_INGREDIENTS)}
 
-응답 형식:
+응답 형식 (❗반드시 숫자와 줄바꿈으로 구분):
 1. 샐러드 이름
-2. 재료 목록
-3. 영양 정보 (칼로리, 단백질, 탄수화물, 지방)
+재료: 재료1, 재료2, ...
+영양 정보: 칼로리, 단백질, 탄수화물, 지방
+
+2. 샐러드 이름
+재료: ...
+...
     """.strip()
     return prompt
 
 def parse_gpt_recipe(raw_text):
     # 1, 2, 3번 레시피를 분리
-    matches = re.split(r"\n(?=\d+\.\s)", raw_text.strip())
+    matches = re.split(r"^\d+\.\s*", raw_text.strip(), flags=re.MULTILINE)
     recipes = []
 
     for block in matches:
@@ -165,7 +169,10 @@ async def generate_recipe(request: Request):
             temperature=0.7
         )
         raw_text = response.choices[0].message.content
+        print("--- GPT 원본 응답 ---")
+        print(raw_text)
         recipe_list = parse_gpt_recipe(raw_text)
+        print("--- 파싱 응답 ---")
         print(recipe_list)
 
         return {
