@@ -164,7 +164,7 @@ async def generate_recipe(request: Request):
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7
         )
-        raw_text = response["choices"][0]["message"]["content"]
+        raw_text = response.choices[0].message.content
         recipe_list = parse_gpt_recipe(raw_text)
 
         return {
