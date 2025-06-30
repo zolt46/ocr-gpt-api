@@ -166,6 +166,7 @@ async def generate_recipe(request: Request):
         )
         raw_text = response.choices[0].message.content
         recipe_list = parse_gpt_recipe(raw_text)
+        print(recipe_list)
 
         return {
             "success": True,
